@@ -259,27 +259,33 @@
   }
 
   #touchControls {
-    display: flex;
+    display: none;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 4px 0;
+    padding: 8px 4px;
+    gap: 8px;
   }
 
-  @media (min-width: 768px) {
-    #touchControls {
-      display: none;
-    }
+  #touchControls.visible {
+    display: flex;
+  }
+
+  /* D-pad left/right */
+  .dpad {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 
   .ctrl-btn {
-    background: #1a1d2e;
-    border: 1.5px solid #3c3489;
-    border-radius: 10px;
+    background: rgba(30, 34, 64, 0.95);
+    border: 2px solid #3c3489;
+    border-radius: 14px;
     color: #afa9ec;
-    font-size: 18px;
-    width: 54px;
-    height: 46px;
+    font-size: 22px;
+    width: 68px;
+    height: 58px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -287,6 +293,8 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
+    box-shadow: 0 4px 0px #1a1040, 0 6px 12px rgba(0,0,0,0.4);
+    transition: transform 0.08s, box-shadow 0.08s;
   }
 
   .ctrl-btn:active,
@@ -294,23 +302,69 @@
     background: #26215c;
     border-color: #7f77dd;
     color: #e8e6ff;
+    transform: translateY(3px);
+    box-shadow: 0 1px 0px #1a1040, 0 2px 6px rgba(0,0,0,0.4);
   }
 
-  #jumpBtn {
-    background: #1e2240;
-    border: 1.5px solid #534ab7;
-    border-radius: 12px;
+  /* Jump buttons — big, distinct, on both sides */
+  .jump-btn {
+    background: rgba(38, 33, 92, 0.95);
+    border: 2px solid #7f77dd;
+    border-radius: 50%;
     color: #c8c4f8;
-    font-size: 13px;
-    font-weight: 500;
-    width: 64px;
-    height: 46px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    width: 72px;
+    height: 72px;
+    box-shadow: 0 5px 0px #12103a, 0 8px 18px rgba(127,119,221,0.3);
+    flex-direction: column;
+    gap: 2px;
   }
 
-  #jumpBtn:active,
-  #jumpBtn.pressed {
+  .jump-btn .jump-arrow {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .jump-btn:active,
+  .jump-btn.pressed {
     background: #3c3489;
+    border-color: #e8e6ff;
     color: #fff;
+    transform: translateY(4px);
+    box-shadow: 0 1px 0px #12103a, 0 2px 8px rgba(127,119,221,0.2);
+  }
+
+  /* Control scheme picker */
+  .scheme-label {
+    font-size: 12px;
+    color: #7f77dd;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .scheme-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .scheme-btn {
+    flex: 1;
+    padding: 10px 0 !important;
+    font-size: 14px !important;
+    border: 1.5px solid #3c3489 !important;
+    background: #0f111a !important;
+    color: #555575 !important;
+    transition: all 0.2s;
+  }
+
+  .scheme-btn.active-scheme {
+    border-color: #7f77dd !important;
+    background: #26215c !important;
+    color: #e8e6ff !important;
   }
 
   #muteBtn {
@@ -356,11 +410,21 @@
     <div id="levelMsg"></div>
   </div>
   <div id="touchControls">
-    <div style="display:flex;gap:6px;">
-      <div class="ctrl-btn" id="btnLeft">←</div>
-      <div class="ctrl-btn" id="btnRight">→</div>
+    <!-- Left JUMP -->
+    <div class="ctrl-btn jump-btn" id="jumpBtnLeft">
+      <span class="jump-arrow">↑</span>
+      <span>JUMP</span>
     </div>
-    <div class="ctrl-btn" id="jumpBtn">JUMP</div>
+    <!-- D-Pad -->
+    <div class="dpad">
+      <div class="ctrl-btn" id="btnLeft">◀</div>
+      <div class="ctrl-btn" id="btnRight">▶</div>
+    </div>
+    <!-- Right JUMP -->
+    <div class="ctrl-btn jump-btn" id="jumpBtnRight">
+      <span class="jump-arrow">↑</span>
+      <span>JUMP</span>
+    </div>
   </div>
 </div>
 
@@ -368,6 +432,11 @@
 <div id="startMenu" class="overlay active">
   <div class="menu-box">
     <h1>RUDIBUDI</h1>
+    <div class="scheme-label">CONTROL SCHEME</div>
+    <div class="scheme-btns">
+      <button class="scheme-btn" id="schemePCBtn" onclick="setScheme('pc')">🖥 PC</button>
+      <button class="scheme-btn" id="schemeMobileBtn" onclick="setScheme('mobile')">📱 Mobile</button>
+    </div>
     <button onclick="startGameFromMenu()">▶ Start Game</button>
     <button onclick="openLevelMenu()">☰ Level Select</button>
   </div>
@@ -401,6 +470,7 @@
   const bossHudWrap = document.getElementById('bossHudWrap');
   const bossHpEl = document.getElementById('bossHp');
   const phaseLabel = document.getElementById('phaseLabel');
+  const touchControls = document.getElementById('touchControls');
 
   const W = 480, H = 300, GRAVITY = 0.45, JUMP = -10.5, SPEED = 3.6;
   let score = 0, lives = 3, level = 1, gameOver = false, won = false, muted = false;
@@ -408,6 +478,22 @@
   let screenFlash = 0;
   let maxUnlockedLevel = parseInt(localStorage.getItem('rudibudi_max_level')) || 1;
   let gameStarted = false;
+  let controlScheme = localStorage.getItem('rudibudi_scheme') || 'pc';
+
+  function setScheme(scheme) {
+    controlScheme = scheme;
+    localStorage.setItem('rudibudi_scheme', scheme);
+    document.getElementById('schemePCBtn').classList.toggle('active-scheme', scheme === 'pc');
+    document.getElementById('schemeMobileBtn').classList.toggle('active-scheme', scheme === 'mobile');
+    if (scheme === 'mobile') {
+      touchControls.classList.add('visible');
+    } else {
+      touchControls.classList.remove('visible');
+    }
+  }
+
+  // Apply saved scheme on load
+  setScheme(controlScheme);
 
   // SPRITE RENDERER
   function createPixelSprite(pattern, palette, pixelSize = 2) {
@@ -551,7 +637,8 @@
   }
   addTouch(document.getElementById('btnLeft'), 'left');
   addTouch(document.getElementById('btnRight'), 'right');
-  addTouch(document.getElementById('jumpBtn'), 'jump');
+  addTouch(document.getElementById('jumpBtnLeft'), 'jump');
+  addTouch(document.getElementById('jumpBtnRight'), 'jump');
   document.addEventListener('keydown', e => { keys[e.code] = true; if (['Space', 'ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault(); });
   document.addEventListener('keyup', e => { keys[e.code] = false; });
   function isLeft() { return keys['ArrowLeft'] || keys['KeyA'] || touch.left; }
@@ -645,6 +732,8 @@
     document.getElementById('startMenu').classList.remove('active');
     gameStarted = true;
     getAC();
+    // Apply scheme after start (in case changed in menu)
+    setScheme(controlScheme);
   }
 
   function openLevelMenu() {
