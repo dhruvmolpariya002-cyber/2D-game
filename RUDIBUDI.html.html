@@ -412,11 +412,7 @@
     <div id="levelMsg"></div>
   </div>
   <div id="touchControls">
-    <!-- Left JUMP -->
-    <div class="ctrl-btn jump-btn" id="jumpBtnLeft">
-      <span class="jump-arrow">↑</span>
-      <span>JUMP</span>
-    </div>
+    <!-- Left JUMP removed so D-pad aligns to the left -->
     <!-- D-Pad -->
     <div class="dpad">
       <div class="ctrl-btn" id="btnLeft">◀</div>
@@ -639,7 +635,7 @@
   }
   addTouch(document.getElementById('btnLeft'), 'left');
   addTouch(document.getElementById('btnRight'), 'right');
-  addTouch(document.getElementById('jumpBtnLeft'), 'jump');
+  // addTouch(document.getElementById('jumpBtnLeft'), 'jump');
   addTouch(document.getElementById('jumpBtnRight'), 'jump');
   document.addEventListener('keydown', e => { keys[e.code] = true; if (['Space', 'ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault(); });
   document.addEventListener('keyup', e => { keys[e.code] = false; });
