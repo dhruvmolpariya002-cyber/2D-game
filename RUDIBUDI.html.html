@@ -25,7 +25,7 @@
     padding: 30px 40px;
     border-radius: 12px;
     border: 2px solid #3c3489;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 15px rgba(127,119,221,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(127, 119, 221, 0.1);
     text-align: center;
     color: #e8e6ff;
     min-width: 320px;
@@ -39,7 +39,7 @@
     letter-spacing: 2px;
     text-shadow: 2px 2px 0px #711f1f;
   }
-  
+
   .menu-box h2 {
     font-size: 22px;
     color: #e8e6ff;
@@ -63,7 +63,7 @@
     border-radius: 8px;
     transition: all 0.2s;
   }
-  
+
   .menu-box button:not(.level-btn):hover {
     background: #3c3489;
     color: #e8e6ff;
@@ -106,7 +106,7 @@
     border: 1.5px solid #534ab7;
     color: #afa9ec;
   }
-  
+
   .level-btn.unlocked:hover {
     background: #26215c;
     border-color: #7f77dd;
@@ -118,7 +118,7 @@
     border: 2px solid #fac775;
     color: #fac775;
     background: #2a2228;
-    box-shadow: 0 0 10px rgba(250,199,117,0.3);
+    box-shadow: 0 0 10px rgba(250, 199, 117, 0.3);
   }
 
   /* HUD button */
@@ -137,7 +137,7 @@
     font-weight: bold;
     transition: all 0.2s;
   }
-  
+
   #levelsBtn:hover {
     background: #26215c;
     border-color: #7f77dd;
@@ -293,7 +293,7 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
-    box-shadow: 0 4px 0px #1a1040, 0 6px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 0px #1a1040, 0 6px 12px rgba(0, 0, 0, 0.4);
     transition: transform 0.08s, box-shadow 0.08s;
   }
 
@@ -303,7 +303,7 @@
     border-color: #7f77dd;
     color: #e8e6ff;
     transform: translateY(3px);
-    box-shadow: 0 1px 0px #1a1040, 0 2px 6px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 0px #1a1040, 0 2px 6px rgba(0, 0, 0, 0.4);
   }
 
   /* Jump buttons — big, distinct, on both sides */
@@ -317,7 +317,7 @@
     letter-spacing: 0.5px;
     width: 72px;
     height: 72px;
-    box-shadow: 0 5px 0px #12103a, 0 8px 18px rgba(127,119,221,0.3);
+    box-shadow: 0 5px 0px #12103a, 0 8px 18px rgba(127, 119, 221, 0.3);
     flex-direction: column;
     gap: 2px;
   }
@@ -333,7 +333,7 @@
     border-color: #e8e6ff;
     color: #fff;
     transform: translateY(4px);
-    box-shadow: 0 1px 0px #12103a, 0 2px 8px rgba(127,119,221,0.2);
+    box-shadow: 0 1px 0px #12103a, 0 2px 8px rgba(127, 119, 221, 0.2);
   }
 
   /* Control scheme picker */
@@ -405,7 +405,9 @@
     <div id="overlay">
       <div id="overlayTitle"></div>
       <div id="overlayBtn">TAP TO RESTART</div>
-      <div id="overlayLevelsBtn" style="margin-top:-4px; cursor:pointer; color:#afa9ec; font-size:12px; text-decoration:underline;" onclick="openLevelMenu()">Choose Level</div>
+      <div id="overlayLevelsBtn"
+        style="margin-top:-4px; cursor:pointer; color:#afa9ec; font-size:12px; text-decoration:underline;"
+        onclick="openLevelMenu()">Choose Level</div>
     </div>
     <div id="levelMsg"></div>
   </div>
@@ -742,27 +744,27 @@
     const grid = document.getElementById('levelGrid');
     grid.innerHTML = '';
     for (let i = 1; i <= 11; i++) {
-        const btn = document.createElement('button');
-        btn.classList.add('level-btn');
-        if (i <= maxUnlockedLevel) {
-            btn.textContent = i;
-            btn.classList.add('unlocked');
-            if (i === level) btn.classList.add('current');
-            btn.onclick = () => {
-                level = i;
-                score = 0; scoreEl.textContent = 0;
-                levelDisp.textContent = level;
-                lives = 3; livesEl.textContent = 3;
-                init(true);
-                document.getElementById('levelMenu').classList.remove('active');
-                gameStarted = true;
-                getAC();
-            };
-        } else {
-            btn.textContent = '🔒';
-            btn.classList.add('locked');
-        }
-        grid.appendChild(btn);
+      const btn = document.createElement('button');
+      btn.classList.add('level-btn');
+      if (i <= maxUnlockedLevel) {
+        btn.textContent = i;
+        btn.classList.add('unlocked');
+        if (i === level) btn.classList.add('current');
+        btn.onclick = () => {
+          level = i;
+          score = 0; scoreEl.textContent = 0;
+          levelDisp.textContent = level;
+          lives = 3; livesEl.textContent = 3;
+          init(true);
+          document.getElementById('levelMenu').classList.remove('active');
+          gameStarted = true;
+          getAC();
+        };
+      } else {
+        btn.textContent = '🔒';
+        btn.classList.add('locked');
+      }
+      grid.appendChild(btn);
     }
   }
 
